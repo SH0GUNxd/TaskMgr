@@ -19,8 +19,7 @@ et rechargées automatiquement au démarrage.
 ```
 taskmanager/
 ├── src/
-│   └── taskmanager/
-│       ├── Main.java          point d'entrée, crée le manager et l'UI
+│   └── ├──Main.java          point d'entrée, crée le manager et l'UI
 │       ├── Task.java          modèle de données + sérialisation JSON
 │       ├── TaskManager.java   logique CRUD + lecture/écriture fichier
 │       └── ConsoleUI.java     interface console (menus, saisies)
