@@ -63,8 +63,9 @@ public class ConsoleUI {
         String description = readLine("Description (facultative, Entree pour ignorer)");
         LocalDate dueDate  = readDate("Date d'echeance (format : dd/MM/yyyy)");
         Task.Status status = readStatus("Statut (TODO / DOING / DONE) [defaut : TODO]", Task.Status.TODO);
+        Task.Priority priority = readPriority("Priorite (LOW / MEDIUM / HIGH) [defaut : MEDIUM]", Task.Priority.MEDIUM);
 
-        Task created = manager.addTask(title, description, dueDate, status);
+        Task created = manager.addTask(title, description, dueDate, status, priority);
 
         System.out.println("\n  Tache ajoutee avec succes :");
         System.out.println(created.toDetailCard());
@@ -127,12 +128,14 @@ public class ConsoleUI {
         String rawTitle  = readLine("Nouveau titre       [actuel : " + existing.getTitle() + "]");
         String rawDesc   = readLine("Nouvelle description [actuel : " + existing.getDescription() + "]");
         String rawDate   = readLine("Nouvelle echeance   [actuel : " + existing.getDueDate().format(INPUT_DATE_FORMAT) + "] (dd/MM/yyyy)");
-        String rawStatus = readLine("Nouveau statut      [actuel : " + existing.getStatus() + "] (TODO/DOING/DONE)");
+        String rawStatus   = readLine("Nouveau statut      [actuel : " + existing.getStatus()   + "] (TODO/DOING/DONE)");
+        String rawPriority = readLine("Nouvelle priorite   [actuel : " + existing.getPriority() + "] (LOW/MEDIUM/HIGH)");
 
-        String      newTitle  = rawTitle.isBlank()  ? null : rawTitle.trim();
-        String      newDesc   = rawDesc.isBlank()   ? null : rawDesc.trim();
-        LocalDate   newDate   = null;
-        Task.Status newStatus = null;
+        String        newTitle    = rawTitle.isBlank()    ? null : rawTitle.trim();
+        String        newDesc     = rawDesc.isBlank()     ? null : rawDesc.trim();
+        LocalDate     newDate     = null;
+        Task.Status   newStatus   = null;
+        Task.Priority newPriority = null;
 
         if (!rawDate.isBlank()) {
             try {
@@ -150,7 +153,15 @@ public class ConsoleUI {
             }
         }
 
-        boolean ok = manager.updateTask(taskId, newTitle, newDesc, newDate, newStatus);
+        if (!rawPriority.isBlank()) {
+            try {
+                newPriority = Task.Priority.parsePriority(rawPriority.trim());
+            } catch (IllegalArgumentException e) {
+                System.out.println("  Priorite invalide, ce champ sera ignore.");
+            }
+        }
+
+        boolean ok = manager.updateTask(taskId, newTitle, newDesc, newDate, newStatus, newPriority);
         if (ok) {
             System.out.println("\n  Tache #" + taskId + " mise a jour.\n");
         } else {
@@ -281,6 +292,22 @@ public class ConsoleUI {
                 return Task.Status.parseStatus(raw);
             } catch (IllegalArgumentException e) {
                 System.out.println("  Statut invalide. Entrez TODO, DOING ou DONE.");
+            }
+        }
+    }
+
+    private Task.Priority readPriority(String prompt, Task.Priority defaultPriority) {
+        while (true) {
+            String raw = readLine(prompt).trim();
+
+            if (raw.isEmpty()) {
+                return defaultPriority;
+            }
+
+            try {
+                return Task.Priority.parsePriority(raw);
+            } catch (IllegalArgumentException e) {
+                System.out.println("  Priorite invalide. Entrez LOW, MEDIUM ou HIGH.");
             }
         }
     }

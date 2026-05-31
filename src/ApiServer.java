@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class ApiServer {
 
@@ -32,6 +33,7 @@ public class ApiServer {
     private final int         port;
     private final Path        webRoot;
     private HttpServer        httpServer;
+    private static final Logger LOG = Logger.getLogger(ApiServer.class.getName());
 
     public ApiServer(TaskManager manager, int port, String webRootPath) {
         this.manager = manager;
@@ -42,7 +44,8 @@ public class ApiServer {
     public void start() throws IOException {
         httpServer = HttpServer.create(new InetSocketAddress(port), 0);
 
-        httpServer.createContext("/api/tasks", this::handleTasks);
+        httpServer.createContext("/api/tasks",  this::handleTasks);
+        httpServer.createContext("/api/export", this::handleExport);
         httpServer.createContext("/api/stats", this::handleStats);
         httpServer.createContext("/",          this::handleStatic);
 
@@ -81,7 +84,7 @@ public class ApiServer {
         } catch (NumberFormatException e) {
             respond(ex, 400, error("ID invalide"));
         } catch (Exception e) {
-            System.err.println("[ERREUR] " + e.getMessage());
+            LOG.severe("Erreur interne : " + e.getMessage());
             respond(ex, 500, error("Erreur interne"));
         }
     }
@@ -132,8 +135,12 @@ public class ApiServer {
             Task.Status status  = statusStr != null && !statusStr.isBlank()
                                     ? Task.Status.parseStatus(statusStr)
                                     : Task.Status.TODO;
+            String priorityStr = extractJsonString(body, "priority");
+            Task.Priority priority = priorityStr != null && !priorityStr.isBlank()
+                                    ? Task.Priority.parsePriority(priorityStr)
+                                    : Task.Priority.MEDIUM;
 
-            Task created = manager.addTask(title, description != null ? description : "", dueDate, status);
+            Task created = manager.addTask(title, description != null ? description : "", dueDate, status, priority);
             respondJson(ex, 201, created.toJson());
 
         } catch (Exception e) {
@@ -156,8 +163,11 @@ public class ApiServer {
 
             String newTitle = (title != null && !title.isBlank()) ? title : null;
             String newDesc  = description;
+            String priorityStr = extractJsonString(body, "priority");
+            Task.Priority priority = priorityStr != null && !priorityStr.isBlank()
+                                    ? Task.Priority.parsePriority(priorityStr) : null;
 
-            boolean ok = manager.updateTask(id, newTitle, newDesc, dueDate, status);
+            boolean ok = manager.updateTask(id, newTitle, newDesc, dueDate, status, priority);
             if (!ok) {
                 respond(ex, 404, error("Tâche introuvable : " + id));
                 return;
@@ -178,6 +188,22 @@ public class ApiServer {
         } else {
             respond(ex, 404, error("Tâche introuvable : " + id));
         }
+    }
+
+    // /api/export - exporte toutes les tâches au format CSV
+
+    private void handleExport(HttpExchange ex) throws IOException {
+        addCorsHeaders(ex);
+        if ("OPTIONS".equals(ex.getRequestMethod())) { respond(ex, 204, ""); return; }
+        if (!"GET".equals(ex.getRequestMethod()))    { respond(ex, 405, error("Méthode non supportée")); return; }
+
+        String csv = manager.exportCsv();
+        byte[] bytes = csv.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        ex.getResponseHeaders().set("Content-Type",        "text/csv; charset=utf-8");
+        ex.getResponseHeaders().set("Content-Disposition", "attachment; filename=tasks.csv");
+        ex.sendResponseHeaders(200, bytes.length);
+        try (java.io.OutputStream os = ex.getResponseBody()) { os.write(bytes); }
+        LOG.info("Export CSV déclenché : " + manager.getTotalTaskCount() + " tâche(s)");
     }
 
     // /api/stats
@@ -260,6 +286,7 @@ public class ApiServer {
     }
 
     // Extraction minimaliste d'une valeur string depuis du JSON plat
+    // Suffisant pour mon format - pas de JSON générique imbriqué
     private String extractJsonString(String json, String key) {
         String search = "\"" + key + "\"";
         int keyIdx = json.indexOf(search);
