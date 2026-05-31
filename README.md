@@ -1,6 +1,6 @@
 # TaskMgr - Gestionnaire de tâches Java
 
-**Auteur :** Félix Vandenbroucke · LP Dev 2026
+**Auteur :** Félix Vandenbroucke · Dev 2026
 
 Application de gestion de tâches construite en Java pur, sans framework ni dépendance externe. Deux modes : **terminal interactif** et **interface web dark mode** avec API REST. Persistence JSON avec écriture atomique, 217 tests, CI GitHub Actions.
 
