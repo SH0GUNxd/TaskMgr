@@ -131,6 +131,16 @@ Corps JSON pour POST / PUT :
 
 ---
 
+## Défis d'ingénierie résolus
+
+* **Gestion de la concurrence** : Implémentation d'un `ReentrantReadWriteLock` dans le `TaskManager` pour garantir l'intégrité des données JSON lors d'accès simultanés par plusieurs threads.
+* **Architecture HTTP robuste** : Utilisation d'un `FixedThreadPool` avec des threads "daemon" pour gérer les requêtes REST en parallèle sans bloquer la JVM, permettant un arrêt propre du serveur et des tests.
+* **Persistence atomique** : Stratégie de sauvegarde `temp-to-final` : les données sont écrites dans un fichier `.tmp` avant un `ATOMIC_MOVE` pour prévenir toute corruption de fichier en cas de crash.
+* **CI/CD "Production-Ready"** : Pipeline GitHub Actions avec timeouts stricts et séparation des tests unitaires/intégration pour garantir la stabilité du build, même sous charge.
+* **Conteneurisation légère** : `Dockerfile` multi-stage optimisé pour réduire la taille de l'image finale tout en garantissant un environnement d'exécution isolé (JDK 21).
+
+---
+
 ## Tests
 
 **217 assertions, zéro dépendance externe.**
