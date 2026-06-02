@@ -139,12 +139,18 @@ public class ApiServerTest {
     }
 
     private static void stopServer() throws Exception {
-        server.stop();
+        if (server != null) {
+            server.stop();
+        }
+        
+        // Ensure temporary files are cleaned up
         Files.deleteIfExists(dataFile);
-        // Nettoyage du webRoot
         Files.walk(webRoot)
              .sorted(java.util.Comparator.reverseOrder())
              .forEach(p -> { try { Files.delete(p); } catch (IOException ignored) {} });
+             
+        // Hard exit if the thread pool is keeping the process alive
+        // (This is a safety net for the test process)
     }
 
     // Tests GET /api/tasks
@@ -673,5 +679,6 @@ public class ApiServerTest {
         System.out.println("  ========================================\n");
 
         if (failed > 0) System.exit(1);
+        System.exit(0);
     }
 }

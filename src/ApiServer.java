@@ -34,6 +34,7 @@ public class ApiServer {
     private final Path        webRoot;
     private HttpServer        httpServer;
     private static final Logger LOG = Logger.getLogger(ApiServer.class.getName());
+    private java.util.concurrent.ExecutorService executor;
 
     public ApiServer(TaskManager manager, int port, String webRootPath) {
         this.manager = manager;
@@ -49,15 +50,26 @@ public class ApiServer {
         httpServer.createContext("/api/stats", this::handleStats);
         httpServer.createContext("/",          this::handleStatic);
 
-        // Parallel processing of requests
-        httpServer.setExecutor(Executors.newFixedThreadPool(10));
+        // Parallel processing of requests with daemon threads
+        this.executor = Executors.newFixedThreadPool(10, r -> {
+            Thread t = new Thread(r);
+            t.setDaemon(true); // Ensures the JVM can exit when tests are done
+            return t;
+        });
+    
+        httpServer.setExecutor(this.executor);
         httpServer.start();
 
         System.out.println("[INFO] Serveur démarré sur http://localhost:" + port);
     }
 
     public void stop() {
-        if (httpServer != null) httpServer.stop(0);
+        if (httpServer != null) {
+            httpServer.stop(0);
+            if (this.executor != null) {
+                this.executor.shutdownNow(); // Force shutdown of the thread pool
+            }
+        }
     }
 
     // /api/tasks - dispatch selon méthode et présence d'un ID dans l'URL
