@@ -40,20 +40,19 @@ taskmanager/
 ├── src/
 │   ├── Main.java              point d'entrée - modes console et web
 │   ├── Task.java              modèle de données, sérialisation JSON, export CSV
-│   ├── TaskManager.java       CRUD, persistence, statistiques
+│   ├── TaskManager.java       CRUD, persistence thread-safe
 │   ├── ConsoleUI.java         interface terminal
-│   └── ApiServer.java         serveur HTTP REST, zéro dépendance
+│   └── ApiServer.java         serveur HTTP REST, multi-threadé
 ├── tests/
 │   ├── TaskManagerTest.java   129 assertions - logique métier
-│   └── ApiServerTest.java      88 assertions - intégration HTTP
+│   └── ApiServerTest.java     88 assertions - intégration HTTP
 ├── web/
 │   ├── index.html             structure HTML
-│   ├── style.css              styles (dark mode, kanban, animations)
-│   └── app.js                 logique frontend (API calls, render, drag & drop)
-├── assets/
-│   └── welcome.png            screenshot
-├── .github/workflows/ci.yml   CI GitHub Actions
-├── Makefile
+│   ├── style.css              styles (dark mode, kanban)
+│   └── app.js                 logique frontend (API, drag & drop)
+├── .github/workflows/ci.yml   Pipeline CI GitHub Actions
+├── Dockerfile                 Configuration conteneur multi-stage
+├── Makefile                   Automatisation (build, test, run)
 ├── tasks.json                 sauvegarde automatique
 └── README.md
 ```
