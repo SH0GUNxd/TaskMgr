@@ -21,10 +21,13 @@ jobs:
           distribution: 'temurin'
 
       - name: Build
+        timeout-minutes: 5
         run: make build
 
       - name: Run unit tests
+        timeout-minutes: 5
         run: make test-unit
 
       - name: Run API integration tests
+        timeout-minutes: 5
         run: make test-api
