@@ -1,6 +1,6 @@
 package taskmanager;
 
-// Félix Vandenbroucke - LP Dev 2026
+// Félix Vandenbroucke - Dev 2026
 // Serveur HTTP minimal basé sur com.sun.net.httpserver (inclus dans le JDK)
 // Endpoints REST JSON :
 //   GET    /api/tasks          liste toutes les tâches (optionnel: ?status=TODO)
@@ -18,13 +18,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 public class ApiServer {
@@ -49,7 +48,8 @@ public class ApiServer {
         httpServer.createContext("/api/stats", this::handleStats);
         httpServer.createContext("/",          this::handleStatic);
 
-        httpServer.setExecutor(null);
+        // Parallel processing of requests
+        httpServer.setExecutor(Executors.newFixedThreadPool(10));
         httpServer.start();
 
         System.out.println("[INFO] Serveur démarré sur http://localhost:" + port);

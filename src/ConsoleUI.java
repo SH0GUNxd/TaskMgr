@@ -1,6 +1,6 @@
 package taskmanager;
 
-// Félix Vandenbroucke - LP Dev 2026
+// Félix Vandenbroucke - Dev 2026
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

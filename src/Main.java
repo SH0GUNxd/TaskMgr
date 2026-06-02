@@ -1,6 +1,6 @@
 package taskmanager;
 
-// Félix Vandenbroucke - LP Dev 2026
+// Félix Vandenbroucke - Dev 2026
 // Point d'entrée de l'application
 //
 // Modes de lancement :
