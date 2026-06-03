@@ -97,8 +97,8 @@ java -cp out taskmanager.Main --web
 ### Docker
 
 ```bash
-docker build -t taskmgr .
-docker run -p 8080:8080 taskmgr
+docker build -t taskmanager .
+docker run -p 8080:8080 taskmanager
 ```
 
 ### JAR
