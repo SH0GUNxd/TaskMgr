@@ -94,6 +94,16 @@ javac -d out src/Task.java src/TaskManager.java src/ConsoleUI.java src/ApiServer
 java -cp out taskmanager.Main --web
 ```
 
+### Deploiment avec Docker
+
+```bash
+# Construire l'image
+docker build -t taskmanager .
+
+# Lancer le conteneur sur le port 8080
+docker run -p 8080:8080 taskmanager
+ ```
+
 ### JAR
 
 ```bash
