@@ -1,67 +1,67 @@
-# TaskMgr - Gestionnaire de tâches Java
+# TaskMgr - Java Task Manager
 
-**Auteur :** Félix Vandenbroucke · Dev 2026
+**Author:** Félix Vandenbroucke · 2026
 
-Application de gestion de tâches construite en Java pur, sans framework ni dépendance externe. Deux modes : **terminal interactif** et **interface web dark mode** avec API REST. Persistence JSON avec écriture atomique, 217 tests, CI GitHub Actions.
+Task management application built in pure Java, with no framework or external dependency. Two modes: **interactive terminal** and **dark mode web interface** with a REST API. JSON persistence with atomic writes, 217 tests, GitHub Actions CI.
 
-![Screenshot de l'interface web](assets/welcome.png)
+![Web interface screenshot](assets/welcome.png)
 
 ---
 
-## Fonctionnalités
+## Features
 
-- Créer, modifier, supprimer des tâches avec titre, description, date d'échéance, statut et priorité
-- **Priorités** LOW / MEDIUM / HIGH avec pills colorées dans l'UI
-- **Statuts** TODO / DOING / DONE avec vue liste et vue Kanban (drag & drop entre colonnes)
-- **Dates colorées** : orange si échéance dans ≤ 3 jours, rouge si dépassée
-- **Filtres** par statut, recherche live, progression globale en sidebar
-- **Export CSV** en un clic
-- Raccourcis clavier : `n` nouvelle tâche · `Ctrl+Enter` valider · `Échap` fermer
-- Mode console complet avec menus interactifs
+- Create, edit, delete tasks with title, description, due date, status and priority
+- **Priorities** LOW / MEDIUM / HIGH with colored pills in the UI
+- **Statuses** TODO / DOING / DONE with list view and Kanban board (drag & drop between columns)
+- **Colored due dates**: orange if ≤ 3 days away, red if overdue
+- **Filters** by status, live search, global progress bar in sidebar
+- **CSV export** in one click
+- Keyboard shortcuts: `n` new task · `Ctrl+Enter` save · `Escape` close
+- Full console mode with interactive menus
 
 ---
 
 ## Stack
 
-| Couche      | Technologie                                      |
+| Layer       | Technology                                       |
 |-------------|--------------------------------------------------|
 | Backend     | Java 21, `com.sun.net.httpserver` (JDK built-in) |
-| Frontend    | HTML / CSS / JS vanilla, zéro framework          |
-| Persistence | JSON maison avec écriture atomique               |
-| Tests       | Framework maison, zéro dépendance externe        |
+| Frontend    | HTML / CSS / vanilla JS, zero framework          |
+| Persistence | Hand-rolled JSON with atomic writes              |
+| Tests       | Hand-rolled framework, zero external dependency  |
 | CI          | GitHub Actions                                   |
 
 ---
 
-## Structure du projet
+## Project structure
 
 ```
 taskmanager/
 ├── src/
-│   ├── Main.java              point d'entrée - modes console et web
-│   ├── Task.java              modèle de données, sérialisation JSON, export CSV
-│   ├── TaskManager.java       CRUD, persistence thread-safe
-│   ├── ConsoleUI.java         interface terminal
-│   └── ApiServer.java         serveur HTTP REST, multi-threadé
+│   ├── Main.java              entry point - console and web modes
+│   ├── Task.java              data model, JSON serialization, CSV export
+│   ├── TaskManager.java       CRUD, persistence, statistics
+│   ├── ConsoleUI.java         terminal interface
+│   └── ApiServer.java         multi-threaded REST HTTP server
 ├── tests/
-│   ├── TaskManagerTest.java   129 assertions - logique métier
-│   └── ApiServerTest.java     88 assertions - intégration HTTP
+│   ├── TaskManagerTest.java   129 assertions - business logic
+│   └── ApiServerTest.java      88 assertions - HTTP integration
 ├── web/
-│   ├── index.html             structure HTML
-│   ├── style.css              styles (dark mode, kanban)
-│   └── app.js                 logique frontend (API, drag & drop)
-├── .github/workflows/ci.yml   Pipeline CI GitHub Actions
-├── Dockerfile                 Configuration conteneur multi-stage
-├── Makefile                   Automatisation (build, test, run)
-├── tasks.json                 sauvegarde automatique
+│   ├── index.html             HTML structure
+│   ├── style.css              styles (dark mode, kanban, animations)
+│   └── app.js                 frontend logic (API calls, render, drag & drop)
+├── .github/workflows/ci.yml   GitHub Actions CI pipeline
+├── Dockerfile                 multi-stage container build
+├── Makefile                   task automation (build, test, run)
+├── tasks.json                 auto-saved data
 └── README.md
 ```
 
 ---
 
-## Prérequis
+## Prerequisites
 
-**Java 17 ou supérieur** (switch expressions).
+**Java 17 or higher** (uses switch expressions).
 
 ```bash
 java -version
@@ -70,28 +70,35 @@ javac -version
 
 ---
 
-## Lancement rapide
+## Quick start
 
 ```bash
-# Compiler
+# Build
 make build
 
-# Mode console
+# Console mode
 make run
 
-# Mode web → http://localhost:8080
+# Web mode → http://localhost:8080
 make web
 
-# Port personnalisé
+# Custom port
 make web PORT=3000
 ```
 
-Sans Make :
+Without Make:
 
 ```bash
 mkdir -p out
 javac -d out src/Task.java src/TaskManager.java src/ConsoleUI.java src/ApiServer.java src/Main.java
 java -cp out taskmanager.Main --web
+```
+
+### Docker
+
+```bash
+docker build -t taskmgr .
+docker run -p 8080:8080 taskmgr
 ```
 
 ### JAR
@@ -103,25 +110,25 @@ java -jar TaskManager.jar --web
 
 ---
 
-## API REST
+## REST API
 
-| Méthode  | Endpoint                     | Description                            |
-|----------|------------------------------|----------------------------------------|
-| `GET`    | `/api/tasks`                 | Liste toutes les tâches                |
-| `GET`    | `/api/tasks?status=TODO`     | Filtre par statut (TODO/DOING/DONE)    |
-| `POST`   | `/api/tasks`                 | Crée une tâche                         |
-| `PUT`    | `/api/tasks/{id}`            | Modifie une tâche (champs partiels OK) |
-| `DELETE` | `/api/tasks/{id}`            | Supprime une tâche                     |
-| `GET`    | `/api/stats`                 | Statistiques par statut                |
-| `GET`    | `/api/export`                | Export CSV de toutes les tâches        |
-| `GET`    | `/`                          | Sert le frontend                       |
+| Method   | Endpoint                     | Description                              |
+|----------|------------------------------|------------------------------------------|
+| `GET`    | `/api/tasks`                 | List all tasks                           |
+| `GET`    | `/api/tasks?status=TODO`     | Filter by status (TODO/DOING/DONE)       |
+| `POST`   | `/api/tasks`                 | Create a task                            |
+| `PUT`    | `/api/tasks/{id}`            | Update a task (partial fields supported) |
+| `DELETE` | `/api/tasks/{id}`            | Delete a task                            |
+| `GET`    | `/api/stats`                 | Stats by status                          |
+| `GET`    | `/api/export`                | Export all tasks as CSV                  |
+| `GET`    | `/`                          | Serves the frontend                      |
 
-Corps JSON pour POST / PUT :
+JSON body for POST / PUT:
 
 ```json
 {
-  "title": "Nom de la tâche",
-  "description": "Détails optionnels",
+  "title": "Task name",
+  "description": "Optional details",
   "dueDate": "2026-06-15",
   "status": "TODO",
   "priority": "HIGH"
@@ -130,32 +137,31 @@ Corps JSON pour POST / PUT :
 
 ---
 
-## Défis d'ingénierie résolus
+## Engineering highlights
 
-* **Gestion de la concurrence** : Implémentation d'un `ReentrantReadWriteLock` dans le `TaskManager` pour garantir l'intégrité des données JSON lors d'accès simultanés par plusieurs threads.
-* **Architecture HTTP robuste** : Utilisation d'un `FixedThreadPool` avec des threads "daemon" pour gérer les requêtes REST en parallèle sans bloquer la JVM, permettant un arrêt propre du serveur et des tests.
-* **Persistence atomique** : Stratégie de sauvegarde `temp-to-final` : les données sont écrites dans un fichier `.tmp` avant un `ATOMIC_MOVE` pour prévenir toute corruption de fichier en cas de crash.
-* **CI/CD "Production-Ready"** : Pipeline GitHub Actions avec timeouts stricts et séparation des tests unitaires/intégration pour garantir la stabilité du build, même sous charge.
-* **Conteneurisation légère** : `Dockerfile` multi-stage optimisé pour réduire la taille de l'image finale tout en garantissant un environnement d'exécution isolé (JDK 21).
+- **Multi-threaded HTTP server**: `FixedThreadPool` with daemon threads handles REST requests in parallel without blocking the JVM, enabling clean server shutdown and reliable test teardown.
+- **Atomic persistence**: write-to-temp strategy - data is written to a `.tmp` file then `ATOMIC_MOVE`d to the final file, preventing any corruption on crash.
+- **Lightweight Docker image**: multi-stage build using `eclipse-temurin:21-jdk-alpine` to compile, then `eclipse-temurin:21-jre-alpine` for the final image - only the JRE and the JAR ship.
+- **CI with timeouts**: GitHub Actions pipeline with 5-minute timeouts per step and separate unit/integration test jobs.
 
 ---
 
 ## Tests
 
-**217 assertions, zéro dépendance externe.**
+**217 assertions, zero external dependency.**
 
 ```bash
-# Tout lancer
+# Run all
 make test
 
-# Unitaires seulement (Task, TaskManager)
+# Unit tests only (Task, TaskManager)
 make test-unit
 
-# Intégration seulement (HTTP, API REST)
+# Integration tests only (HTTP, REST API)
 make test-api
 ```
 
-Sans Make :
+Without Make:
 
 ```bash
 javac -cp out -d out tests/TaskManagerTest.java tests/ApiServerTest.java
@@ -163,21 +169,21 @@ java -cp out taskmanager.TaskManagerTest
 java -cp out taskmanager.ApiServerTest
 ```
 
-Les tests d'intégration démarrent un vrai serveur HTTP sur un port libre et envoient de vraies requêtes - pas de mock. Retourne exit code 0 si tout passe, 1 sinon (compatible CI).
+Integration tests spin up a real HTTP server on a random free port and fire real HTTP requests - no mocks. Returns exit code 0 if all pass, 1 otherwise (CI-compatible).
 
 ---
 
-## Format `tasks.json`
+## `tasks.json` format
 
-Écriture atomique : les données sont écrites dans un fichier `.tmp` puis déplacées sur le fichier final - aucune perte possible en cas de coupure.
+Updated automatically after every add, edit or delete. Atomic write: data goes to a `.tmp` file first, then moves to the final file - no data loss on crash.
 
 ```json
 [
-  {"id":1,"title":"Configurer l'environnement","description":"Installer JDK 21","dueDate":"2025-02-28","status":"DONE","priority":"HIGH"},
-  {"id":2,"title":"Ecrire les tests unitaires","description":"Couvrir Task et TaskManager","dueDate":"2025-03-10","status":"DOING","priority":"MEDIUM"},
-  {"id":3,"title":"Rediger la documentation","description":"README et Javadoc","dueDate":"2025-03-15","status":"TODO","priority":"LOW"}
+  {"id":1,"title":"Set up the environment","description":"Install JDK 21","dueDate":"2025-02-28","status":"DONE","priority":"HIGH"},
+  {"id":2,"title":"Write unit tests","description":"Cover Task and TaskManager","dueDate":"2025-03-10","status":"DOING","priority":"MEDIUM"},
+  {"id":3,"title":"Write documentation","description":"README and Javadoc","dueDate":"2025-03-15","status":"TODO","priority":"LOW"}
 ]
 ```
 
-Champs : `id`, `title`, `description`, `dueDate` (ISO : AAAA-MM-JJ), `status`, `priority`.
-Les fichiers sans champ `priority` sont chargés avec MEDIUM par défaut (rétrocompatible).
+Fields: `id`, `title`, `description`, `dueDate` (ISO format: YYYY-MM-DD), `status`, `priority`.
+Files without a `priority` field load with MEDIUM as default (backward compatible).
