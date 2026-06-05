@@ -1,8 +1,0 @@
-[
-  {"id":1,"title":"Configurer l'environnement","description":"Installer JDK 21 et configurer PATH","dueDate":"2025-02-28","status":"DONE"},
-  {"id":2,"title":"Écrire les tests unitaires","description":"Couvrir Task et TaskManager avec JUnit","dueDate":"2025-03-10","status":"DOING"},
-  {"id":3,"title":"Rédiger la documentation","description":"Compléter le README et les Javadoc","dueDate":"2025-03-15","status":"TODO"},
-  {"id":4,"title":"Livrer le MVP","description":"Packaging jar et envoi au client","dueDate":"2025-03-20","status":"TODO"},
-  {"id":5,"title":"Démo client","description":"Présentation en visioconférence","dueDate":"2025-03-25","status":"TODO"},
-  {"id":6,"title":"tache","description":"","dueDate":"2001-12-11","status":"TODO"}
-]

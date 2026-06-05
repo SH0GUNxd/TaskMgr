@@ -35,7 +35,7 @@ Task management application built in pure Java, with no framework or external de
 
 ## Project structure
 
-```
+```text
 taskmanager/
 ├── src/
 │   ├── Main.java              entry point - console and web modes
@@ -53,7 +53,8 @@ taskmanager/
 ├── .github/workflows/ci.yml   GitHub Actions CI pipeline
 ├── Dockerfile                 multi-stage container build
 ├── Makefile                   task automation (build, test, run)
-├── tasks.json                 auto-saved data
+├── data/                      folder mapped for persistence
+│   └── tasks.json             auto-saved data
 └── README.md
 ```
 
@@ -99,12 +100,12 @@ java -cp out taskmanager.Main --web
 ```bash
 docker build -t taskmanager .
 
-# Run the container and map the tasks.json file so your data is saved permanently
+# Run the container and map the data directory so your tasks are saved permanently
 # On Mac/Linux:
-docker run -p 8080:8080 -v "$(pwd)/tasks.json:/app/tasks.json" taskmanager
+docker run -p 8080:8080 -v "$(pwd)/data:/app/data" taskmanager
 
 # On Windows (PowerShell):
-docker run -p 8080:8080 -v "${PWD}/tasks.json:/app/tasks.json" taskmanager
+docker run -p 8080:8080 -v "${PWD}/data:/app/data" taskmanager
 ```
 
 ### JAR
