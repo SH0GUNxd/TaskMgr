@@ -200,6 +200,10 @@ public class TaskManager {
 
         Path tempFile = dataFilePath.resolveSibling(dataFilePath.getFileName() + ".tmp");
         try {
+            if (dataFilePath.getParent() != null) {
+                Files.createDirectories(dataFilePath.getParent());
+            }
+
             Files.writeString(tempFile, sb.toString(),
                 StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             Files.move(tempFile, dataFilePath,

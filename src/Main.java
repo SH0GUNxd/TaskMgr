@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class Main {
 
-    private static final String DEFAULT_SAVE_FILE = "tasks.json";
+    private static final String DEFAULT_SAVE_FILE = "data/tasks.json";
     private static final int    DEFAULT_PORT      = 8080;
     private static final String DEFAULT_WEB_ROOT  = "web";
 
