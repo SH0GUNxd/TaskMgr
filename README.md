@@ -98,7 +98,13 @@ java -cp out taskmanager.Main --web
 
 ```bash
 docker build -t taskmanager .
-docker run -p 8080:8080 taskmanager
+
+# Run the container and map the tasks.json file so your data is saved permanently
+# On Mac/Linux:
+docker run -p 8080:8080 -v "$(pwd)/tasks.json:/app/tasks.json" taskmanager
+
+# On Windows (PowerShell):
+docker run -p 8080:8080 -v "${PWD}/tasks.json:/app/tasks.json" taskmanager
 ```
 
 ### JAR
