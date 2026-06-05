@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,52 +12,50 @@
 
 <div class="shell">
 
-  <!-- Topbar -->
   <header class="topbar">
     <div class="logo">task<em>mgr</em></div>
     <div class="topbar-right">
-      <button class="btn btn-ghost" onclick="exportCsv()" title="Exporter en CSV">
+      <button class="btn btn-ghost" onclick="exportCsv()" title="Export to CSV">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Export CSV
       </button>
       <button class="btn btn-primary" onclick="openModal()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Nouvelle tâche
+        New Task
       </button>
     </div>
   </header>
 
-  <!-- Sidebar -->
   <nav class="sidebar">
     <div class="nav-item active" data-filter="all" onclick="setNavFilter('all', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      Toutes
+      All
       <span class="nav-badge" id="nav-all">0</span>
     </div>
     <div class="nav-item" data-filter="TODO" onclick="setNavFilter('TODO', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>
-      À faire
+      To Do
       <span class="nav-badge" id="nav-todo">0</span>
     </div>
     <div class="nav-item" data-filter="DOING" onclick="setNavFilter('DOING', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-      En cours
+      In Progress
       <span class="nav-badge" id="nav-doing">0</span>
     </div>
     <div class="nav-item" data-filter="DONE" onclick="setNavFilter('DONE', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="20 6 9 17 4 12"/></svg>
-      Terminées
+      Done
       <span class="nav-badge" id="nav-done">0</span>
     </div>
     <div class="nav-item" data-filter="overdue" onclick="setNavFilter('overdue', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      En retard
+      Overdue
       <span class="nav-badge" id="nav-overdue">0</span>
     </div>
 
     <div class="sidebar-bottom">
       <div class="progress-label">
-        <span>Progression</span>
+        <span>Progress</span>
         <span id="progress-pct">0%</span>
       </div>
       <div class="progress-track">
@@ -66,56 +64,51 @@
     </div>
   </nav>
 
-  <!-- Main -->
   <main class="main">
 
-    <!-- Stats -->
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-label">Total</div>
         <div class="stat-value" id="stat-total">0</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">À faire</div>
+        <div class="stat-label">To Do</div>
         <div class="stat-value c-accent" id="stat-todo">0</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">En cours</div>
+        <div class="stat-label">In Progress</div>
         <div class="stat-value c-amber" id="stat-doing">0</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Terminées</div>
+        <div class="stat-label">Done</div>
         <div class="stat-value c-green" id="stat-done">0</div>
       </div>
     </div>
 
-    <!-- Toolbar -->
     <div class="toolbar">
       <div class="filter-group">
-        <button class="filter-btn active" data-status="all"     onclick="setFilter('all', this)">Tout</button>
+        <button class="filter-btn active" data-status="all"     onclick="setFilter('all', this)">All</button>
         <button class="filter-btn"        data-status="TODO"    onclick="setFilter('TODO', this)">Todo</button>
         <button class="filter-btn"        data-status="DOING"   onclick="setFilter('DOING', this)">Doing</button>
         <button class="filter-btn"        data-status="DONE"    onclick="setFilter('DONE', this)">Done</button>
-        <button class="filter-btn"        data-status="overdue" onclick="setFilter('overdue', this)">Retard</button>
+        <button class="filter-btn"        data-status="overdue" onclick="setFilter('overdue', this)">Overdue</button>
       </div>
       <div class="view-toggle">
-        <button class="view-btn active" id="btn-list" onclick="setView('list')" title="Vue liste">
+        <button class="view-btn active" id="btn-list" onclick="setView('list')" title="List view">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
         </button>
-        <button class="view-btn" id="btn-kanban" onclick="setView('kanban')" title="Vue Kanban">
+        <button class="view-btn" id="btn-kanban" onclick="setView('kanban')" title="Kanban view">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="5" height="18" rx="1"/><rect x="10" y="3" width="5" height="12" rx="1"/><rect x="17" y="3" width="5" height="15" rx="1"/></svg>
         </button>
       </div>
       <div class="search-box">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="search-input" placeholder="Rechercher…" oninput="renderTasks()">
+        <input type="text" id="search-input" placeholder="Search…" oninput="renderTasks()">
       </div>
     </div>
 
-    <!-- Task list -->
     <div class="task-list" id="task-list"></div>
 
-    <!-- Kanban board -->
     <div class="kanban-board" id="kanban-board" style="display:none">
       <div class="kanban-col" id="col-TODO"
            ondragover="onKanbanColDragOver(event,'TODO')"
@@ -132,7 +125,7 @@
            ondragleave="onKanbanColDragLeave(event)"
            ondrop="onKanbanColDrop(event,'DOING')">
         <div class="kanban-col-header">
-          <span class="kanban-col-title c-amber">En cours</span>
+          <span class="kanban-col-title c-amber">In Progress</span>
           <span class="kanban-count" id="kcnt-DOING">0</span>
         </div>
         <div class="kanban-cards" id="kcards-DOING"></div>
@@ -142,7 +135,7 @@
            ondragleave="onKanbanColDragLeave(event)"
            ondrop="onKanbanColDrop(event,'DONE')">
         <div class="kanban-col-header">
-          <span class="kanban-col-title c-green">Terminé</span>
+          <span class="kanban-col-title c-green">Done</span>
           <span class="kanban-count" id="kcnt-DONE">0</span>
         </div>
         <div class="kanban-cards" id="kcards-DONE"></div>
@@ -152,25 +145,24 @@
   </main>
 </div>
 
-<!-- Modal create/edit -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOnOverlay(event)">
   <div class="modal">
-    <div class="modal-title" id="modal-title">Nouvelle tâche</div>
+    <div class="modal-title" id="modal-title">New Task</div>
     <div class="field">
-      <label>Titre *</label>
-      <input type="text" id="f-title" placeholder="Nom de la tâche…">
+      <label>Title *</label>
+      <input type="text" id="f-title" placeholder="Task name…">
     </div>
     <div class="field">
       <label>Description</label>
-      <textarea id="f-desc" placeholder="Détails optionnels…"></textarea>
+      <textarea id="f-desc" placeholder="Optional details…"></textarea>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
       <div class="field">
-        <label>Échéance</label>
+        <label>Due Date</label>
         <input type="date" id="f-date">
       </div>
       <div class="field">
-        <label>Statut</label>
+        <label>Status</label>
         <select id="f-status">
           <option value="TODO">TODO</option>
           <option value="DOING">DOING</option>
@@ -179,32 +171,30 @@
       </div>
     </div>
     <div class="field">
-      <label>Priorité</label>
+      <label>Priority</label>
       <select id="f-priority">
-        <option value="LOW">LOW - faible</option>
-        <option value="MEDIUM" selected>MEDIUM - normale</option>
-        <option value="HIGH">HIGH - urgente</option>
+        <option value="LOW">LOW</option>
+        <option value="MEDIUM" selected>MEDIUM</option>
+        <option value="HIGH">HIGH</option>
       </select>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal()">Annuler</button>
-      <button class="btn btn-primary" onclick="submitTask()">Enregistrer</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitTask()">Save</button>
     </div>
   </div>
 </div>
 
-<!-- Confirm delete -->
 <div class="modal-overlay" id="confirm-overlay" onclick="closeConfirmOnOverlay(event)">
   <div class="confirm-box">
-    <p id="confirm-msg">Supprimer cette tâche ?</p>
+    <p id="confirm-msg">Delete this task?</p>
     <div class="confirm-footer">
-      <button class="btn btn-ghost" onclick="closeConfirm()">Annuler</button>
-      <button class="btn btn-danger" onclick="confirmAction()">Supprimer</button>
+      <button class="btn btn-ghost" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmAction()">Delete</button>
     </div>
   </div>
 </div>
 
-<!-- Toasts -->
 <div class="toast-container" id="toast-container"></div>
 
 <script src="app.js"></script>

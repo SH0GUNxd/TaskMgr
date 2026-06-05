@@ -31,7 +31,7 @@ async function load() {
     updateStats(stats);
     renderTasks();
   } catch (e) {
-    toast('Erreur de connexion au serveur', 'red');
+    toast('Server connection error', 'red');
   }
 }
 
@@ -88,7 +88,7 @@ function renderTasks() {
           <rect x="3" y="3" width="18" height="18" rx="3"/>
           <path d="M9 12h6M12 9v6"/>
         </svg>
-        <p>Aucune tâche à afficher</p>
+        <p>No tasks to display</p>
       </div>`;
     return;
   }
@@ -96,7 +96,7 @@ function renderTasks() {
   list.innerHTML = filtered.map((t, idx) => {
     const overdue = isOverdue(t);
     const pill = overdue
-      ? `<span class="pill pill-overdue">RETARD</span>`
+      ? `<span class="pill pill-overdue">OVERDUE</span>`
       : `<span class="pill pill-${t.status.toLowerCase()}">${t.status}</span>`;
     const todayStr  = today();
     const daysUntil = t.dueDate ? Math.ceil((new Date(t.dueDate) - new Date(todayStr)) / 86400000) : 999;
@@ -135,10 +135,10 @@ function renderTasks() {
         </div>
       </div>
       <div class="task-actions">
-        <button class="icon-btn" onclick="openModal(${t.id})" title="Modifier">
+        <button class="icon-btn" onclick="openModal(${t.id})" title="Edit">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </button>
-        <button class="icon-btn delete" onclick="confirmDelete(${t.id})" title="Supprimer">
+        <button class="icon-btn delete" onclick="confirmDelete(${t.id})" title="Delete">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
         </button>
       </div>
@@ -179,7 +179,7 @@ async function toggleDone(id) {
       method: 'PUT',
       body: JSON.stringify({ status: newStatus })
     });
-    toast(newStatus === 'DONE' ? 'Tâche terminée ✓' : 'Tâche réouverte', newStatus === 'DONE' ? 'green' : 'accent');
+    toast(newStatus === 'DONE' ? 'Task completed ✓' : 'Task reopened', newStatus === 'DONE' ? 'green' : 'accent');
     await load();
   } catch (e) { toast(e.message, 'red'); }
 }
@@ -188,7 +188,7 @@ async function toggleDone(id) {
 function openModal(id = null) {
   editingId = id;
   const overlay = document.getElementById('modal-overlay');
-  document.getElementById('modal-title').textContent = id ? 'Modifier la tâche' : 'Nouvelle tâche';
+  document.getElementById('modal-title').textContent = id ? 'Edit Task' : 'New Task';
 
   if (id) {
     const t = tasks.find(t => t.id === id);
@@ -225,7 +225,7 @@ async function submitTask() {
 
   if (!title) {
     document.getElementById('f-title').focus();
-    toast('Le titre est obligatoire', 'red');
+    toast('Title is required', 'red');
     return;
   }
 
@@ -235,10 +235,10 @@ async function submitTask() {
   try {
     if (editingId) {
       await apiFetch('/tasks/' + editingId, { method: 'PUT', body });
-      toast('Tâche modifiée', 'accent');
+      toast('Task updated', 'accent');
     } else {
       await apiFetch('/tasks', { method: 'POST', body });
-      toast('Tâche créée', 'green');
+      toast('Task created', 'green');
     }
     closeModal();
     await load();
@@ -250,7 +250,7 @@ function confirmDelete(id) {
   pendingDelete = id;
   const t = tasks.find(t => t.id === id);
   document.getElementById('confirm-msg').textContent =
-    `Supprimer « ${t ? t.title : id} » ? Cette action est irréversible.`;
+    `Delete "${t ? t.title : id}"? This action cannot be undone.`;
   document.getElementById('confirm-overlay').classList.add('open');
 }
 
@@ -267,7 +267,7 @@ async function confirmAction() {
   if (!pendingDelete) return;
   try {
     await apiFetch('/tasks/' + pendingDelete, { method: 'DELETE' });
-    toast('Tâche supprimée', 'red');
+    toast('Task deleted', 'red');
     closeConfirm();
     await load();
   } catch (e) { toast(e.message, 'red'); }
@@ -352,7 +352,7 @@ function exportCsv() {
   a.href     = '/api/export';
   a.download = 'tasks.csv';
   a.click();
-  toast('Export CSV été téléchargé', 'green');
+  toast('CSV export downloaded', 'green');
 }
 
 // View toggle
@@ -385,7 +385,7 @@ function renderKanban() {
     count.textContent = filtered.length;
 
     if (!filtered.length) {
-      col.innerHTML = '<div class="kanban-empty">Aucune tâche</div>';
+      col.innerHTML = '<div class="kanban-empty">No tasks</div>';
       continue;
     }
 
@@ -405,10 +405,10 @@ function renderKanban() {
             ${dateStr}
           </span>
           <div class="kanban-card-actions">
-            <button class="icon-btn" onclick="openModal(${t.id})" title="Modifier">
+            <button class="icon-btn" onclick="openModal(${t.id})" title="Edit">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             </button>
-            <button class="icon-btn delete" onclick="confirmDelete(${t.id})" title="Supprimer">
+            <button class="icon-btn delete" onclick="confirmDelete(${t.id})" title="Delete">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg>
             </button>
           </div>
@@ -451,7 +451,7 @@ async function onKanbanColDrop(e, newStatus) {
       method: 'PUT',
       body: JSON.stringify({ status: newStatus })
     });
-    toast('Déplacé vers ' + newStatus, 'accent');
+    toast('Moved to ' + newStatus, 'accent');
     await load();
   } catch (err) {
     toast(err.message, 'red');
